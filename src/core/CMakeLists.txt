@@ -1,0 +1,34 @@
+cmake_minimum_required(VERSION 2.6)
+PROJECT(Core)
+
+AUX_SOURCE_DIRECTORY(./ SRC_LIST1)
+AUX_SOURCE_DIRECTORY(../protocol SRC_LIST2)
+AUX_SOURCE_DIRECTORY(./jsoncpp SRC_LIST3)
+
+if(APPLE)
+    SET(PB_LIB_DIR ./pb/lib/mac)
+elseif(UNIX)
+    SET(PB_LIB_DIR ./pb/lib/linux)
+endif()
+
+SET(LIBRARY_OUTPUT_PATH ./)
+#SET(EXECUTABLE_OUTPUT_PATH  ./bin)
+
+ADD_DEFINITIONS( -g -W -Wall -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DAC_HAS_INFO
+-DAC_HAS_WARNING -DAC_HAS_ERROR -DAC_HAS_CRITICAL -DTIXML_USE_STL
+-DAC_HAS_DEBUG -DLINUX_DAEMON)
+
+#用于设定目录，这些设定的目录将被编译器用来查找 include 文件
+INCLUDE_DIRECTORIES(./ ../ ./jsoncpp ./pb ../protocol)
+LINK_DIRECTORIES(./ ${PB_LIB_DIR})
+
+#添加一个名为core的库文件
+ADD_LIBRARY(core STATIC ${SRC_LIST1} ${SRC_LIST2} ${SRC_LIST3})
+
+#ADD_XXXX必须在TARGET_LINK_LIBRARIES前面，否则会报错
+#ADD_LIBRARY(${PROJECTNAME} SHARED ${SRC_LIST})
+
+#ADD_EXECUTABLE(${PROJECTNAME} ${SRC_LIST})
+
+#用于指定 core 需要链接 pthread crypto
+TARGET_LINK_LIBRARIES(core pthread crypto)

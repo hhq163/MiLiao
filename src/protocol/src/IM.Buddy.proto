@@ -1,0 +1,286 @@
+package IM.Buddy;
+import "IM.BaseDefine.proto";
+option java_package = "com.blizzmi.mliao.protobuf";
+//option java_outer_classname = "BLIZZMIIMMessage";
+option optimize_for = LITE_RUNTIME;
+
+//service id   0x0002
+
+message IMRecentContactSessionReq{
+	//cmd id:		0x0201
+	required uint32 user_id = 1;
+	required uint32 latest_update_time = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMRecentContactSessionRsp{
+	//cmd id:		0x0202
+	required uint32 user_id = 1;
+	repeated IM.BaseDefine.ContactSessionInfo contact_session_list = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMUserStatNotify{
+	//cmd id:		0x0203
+	required IM.BaseDefine.UserStat user_stat = 1;
+}
+
+message IMUsersInfoReq{
+	//cmd id:		0x0204
+	required uint32 user_id = 1;
+	repeated uint32 user_id_list = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMUsersInfoRsp{
+	//cmd id:		0x0205
+	required uint32 user_id = 1;
+	repeated IM.BaseDefine.UserInfo user_info_list = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMRemoveSessionReq{
+	//cmd id:		0x0206
+	required uint32 user_id = 1;
+	required IM.BaseDefine.SessionType session_type = 2;
+	required uint32 session_id = 3;
+	optional bytes attach_data = 20;
+}
+
+message IMRemoveSessionRsp{
+	//cmd id:		0x0207
+	required uint32 user_id = 1;
+	required uint32 result_code = 2;
+	required IM.BaseDefine.SessionType session_type = 3;
+	required uint32 session_id = 4;
+	optional bytes attach_data = 20;
+}
+
+message IMAllUserReq{
+	//cmd id:		0x0208
+	required uint32 user_id = 1;
+	required uint32 latest_update_time = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMAllUserRsp{
+	//cmd id:		0x0209
+	required uint32 user_id = 1;
+	required uint32 latest_update_time = 2;
+	repeated IM.BaseDefine.UserInfo user_list = 3;		
+	optional bytes attach_data = 20;
+}
+
+message IMUsersStatReq{
+	//cmd id:		0x020a
+	required uint32 user_id = 1;
+	repeated uint32 user_id_list = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMUsersStatRsp{
+	//cmd id:		0x020b
+	required uint32 user_id = 1;
+	repeated IM.BaseDefine.UserStat user_stat_list = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMChangeAvatarReq{
+	//cmd id:		0x020c
+	required uint32 user_id = 1;
+	required string avatar_url = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMChangeAvatarRsp{
+	//cmd id:		0x020d
+	required uint32 user_id = 1;
+	required uint32 result_code = 2;
+	optional bytes attach_data = 20;
+}
+
+//只给移动端通知
+message IMPCLoginStatusNotify{
+	//cmd id:		0x020e
+	required uint32 user_id = 1;
+	required IM.BaseDefine.UserStatType login_stat = 2;
+}
+
+ message IMRemoveSessionNotify{
+ 	//cmd id:		0x020f
+ 	required uint32 user_id = 1;
+	required IM.BaseDefine.SessionType session_type = 2;
+	required uint32 session_id = 3;
+ }
+
+message IMDepartmentReq{
+	//cmd id:		0x0210
+	required uint32 user_id = 1;
+	required uint32 latest_update_time = 2;
+	optional bytes attach_data = 20;
+}
+
+message IMDepartmentRsp{
+	//cmd id:		0x0211
+	required uint32 user_id = 1;
+	required uint32 latest_update_time = 2;
+	repeated IM.BaseDefine.DepartInfo dept_list = 3;
+	optional bytes attach_data = 20;
+}
+
+message IMAvatarChangedNotify {
+
+    //cmd id:		0x02012
+    required uint32 changed_user_id = 1;      // 谁修改了avatar
+    required string avatar_url = 2;           //
+}
+
+message IMChangeSignInfoReq{
+   //cmd id:		0x0213
+
+    required uint32 user_id = 1;
+    required string sign_info = 2;
+    optional bytes attach_data = 20;
+}
+
+message IMChangeSignInfoRsp{
+    //cmd id:		0x0214
+    required uint32 user_id = 1;
+    required uint32 result_code = 2;
+    optional string sign_info = 3;      // 此字段服务端用，客户端直接忽略
+    optional bytes attach_data = 20;
+}
+
+    // 个性签名修改通知（广播）
+message IMSignInfoChangedNotify {
+    //cmd id:		0x0215
+    required uint32 changed_user_id = 1;     // 谁修改了个性签名
+    required string sign_info = 2;
+}
+
+message IMUserSearchReq{
+	//cmd id:		0x0216
+	required uint32 user_id = 1;
+	required string user_name = 2;
+	required uint32 search_type = 3;
+	required uint32 search_seq = 4;
+	required uint32 page_size = 5;
+	optional bytes attach_data = 20;
+}
+
+message IMUserSearchRsp{
+	//cmd id:		0x0217
+	required uint32 user_id = 1;                   	//搜索者ID
+	required uint32 search_type = 2;
+	required uint32 search_reault = 3;						//搜索结果  0：找到匹配用户  1：未找到匹配用户
+	required uint32 search_seq = 4;
+	repeated IM.BaseDefine.UserInfo user_info_list = 5; 	//
+	optional bytes attach_data = 20;
+}
+//添加好友请求
+message IMUserAddFriendReq{
+	//cmd id:		0x0218
+	required uint32 user_id = 1;
+	required uint32 add_id = 2;
+	optional string str_valid = 3;
+	optional bytes attach_data = 20;
+}
+
+//添加好友响应
+message IMUserAddFriendRsp{
+	//cmd id:		0x0219
+	required uint32 user_id = 1;
+	required uint32 add_id = 2;
+	required uint32 result_code = 3;	//0发送成功，等待对方验证，1已经是好友，2对方拒绝你的好友请求，3添加好友失败
+	required string result_des = 4;
+	optional bytes attach_data = 20;
+}
+//删除好友
+message IMUserRemFriendReq{
+	//cmd id:		0x0220 
+	required uint32 user_id = 1;		//操作者ID
+	required uint32 remove_id = 2;		//要删除的用户ID
+	optional bytes attach_data = 20;	//附加数据
+}
+
+message IMUserRemFriendRsp{
+	//cmd id:		0x0221
+	required uint32 user_id = 1;		//操作者ID
+	required uint32 result_code = 2;	//返回结果 0：删除成功    1：删除失败
+	required uint32 rm_id = 3;			//已删除的ID
+	required string result_string = 4;	//结果描述
+	optional bytes attach_data = 20;	//附加数据
+}
+
+message IMUserInfoChangeReq{
+	//cmd id:		0x0222
+	required uint32 user_id = 1;		//操作者ID
+	required uint32 change_type = 2; 	//
+	required string change_content = 3;
+	optional bytes attach_data = 20;	//附加数据
+}
+
+message IMUserInfoChangeRsp{
+	//cmd id:		0x0223
+	required uint32 user_id = 1;		//操作者ID
+	required uint32 result_code = 2; 	//返回结果 0:修改成功  1:修改失败
+	required string result_des = 3;		//结果描述
+	required uint32 change_type = 4; 	//修改后的UserInfo
+	optional bytes attach_data = 20;	//附加数据
+}
+
+//推送目标用户
+message IMUserAddFriendToUserRsp{
+	//cmd id:		0x0224
+	required uint32 user_id = 1;
+	required uint32 from_id = 2;
+	required uint32 msg_id = 3;
+	required IM.BaseDefine.UserInfo user_info = 4;
+	required IM.BaseDefine.SessionType msg_type = 5;
+	required IM.BaseDefine.AddFriendStatus status = 6;
+	required uint32 create_time = 7;
+	optional string content = 8;
+	optional bytes attach_data = 20;
+}
+//目标用户点击同意或拒绝时请求消息
+message IMUserAddFriendTargetReq{
+
+	//cmd id:		0x0225
+	required uint32 user_id = 1;//被邀请者ID
+	required uint32 from_id = 2;//发起邀请的人
+	required uint32 msg_id = 3;
+	required IM.BaseDefine.AddFriendStatus status = 4;
+	optional bytes attach_data = 20;
+}
+//目标用户点击同意或拒绝时响应消息
+message IMUserAddFriendTargetRsp{
+	//cmd id:		0x0226
+	required uint32 user_id = 1;
+	required uint32 from_id = 2;
+	required uint32 msg_id = 3;
+	required IM.BaseDefine.AddFriendStatus status = 4;
+	required uint32 result_code = 5;
+	required string result_des = 6;
+	required IM.BaseDefine.UserInfo user_info = 7;
+	optional bytes attach_data = 20;
+}
+//同意或拒绝添加好友处理响应
+message IMUserAddFriendToSelfRsp{
+	//cmd id:		0x0227
+	required uint32 user_id = 1;
+	required uint32 from_id = 2;
+	required uint32 msg_id = 3;
+	required IM.BaseDefine.UserInfo user_info = 4;
+	required IM.BaseDefine.SessionType msg_type = 5;
+	required uint32 create_time = 6;
+	required IM.BaseDefine.AddFriendStatus status = 7;
+	required string result_des = 8;
+	optional string content = 9;
+	optional bytes attach_data = 20;
+}
+message IMSendDelMsgToTargetRsp{
+	//cmd id: 		0x0228
+	required uint32 user_id = 1;
+	required uint32 from_id = 2;
+	optional bytes attach_data = 20;
+}

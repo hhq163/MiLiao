@@ -27,10 +27,11 @@ enum LOG_LEVEL
 #define MAX_LOG_BUFFER  2048
 #define MAX_LOG_PATH    256
 
-//#ifdef __MSGSYS_SVR__
+//30M
+#define MAX_FILE_SIZE 30*1024*1024
 #define DEFAULT_LOG_PATH    "./log/"
 #define DEFAULT_STAT_PATH   "./stat/"
-//#endif
+
 
 typedef struct
 {
@@ -59,6 +60,7 @@ protected:
     bool ConnServer();
     int Write(LOG_INFO *pLogInfo);
     const char* GetLevelString(LOG_LEVEL eLevel);
+    unsigned long getFileSize(const char *path);
 
 private:
     uint16_t          m_wLevel;
@@ -70,7 +72,6 @@ private:
     CObjectPool<LOG_INFO>   m_oLogQ, m_oIdleQ;
     CSem            m_oSem;
 
-    uint32_t          m_dwIndexL;
     FILE*           m_pLogFile;
     uint32_t          m_dwIndexS;
     FILE*           m_pStatFile;

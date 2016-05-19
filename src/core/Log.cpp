@@ -11,7 +11,7 @@ CLogger::CLogger()
     m_wPort     = 0;
     m_dwSockFd  = -1;
 
-    m_dwIndexL = m_dwIndexS = 0;
+    m_dwIndexS = 0;
     m_pLogFile = m_pStatFile = NULL;
 }
 
@@ -345,19 +345,27 @@ int CLogger::Write(LOG_INFO *pLogInfo)
             pFile = m_pStatFile;
         }
     }else{
-        uint32_t dwIndex = pLogTime->tm_hour/6 + 1;
-        sprintf(cFullPath, "%s_%02d_%02d-%02d_%d.log", DEFAULT_LOG_PATH, pLogTime->tm_mon+1, pLogTime->tm_mday, dwIndex, m_dwLogID);
+        sprintf(cFullPath, "%s%02d_%02d_%d.log", DEFAULT_LOG_PATH, pLogTime->tm_mon+1, pLogTime->tm_mday, m_dwLogID);
 
         nHeads = sprintf(cHeads, "[%d] %s [%02d-%02d %02d:%02d:%02d:%03ld:%03ld] ", \
             m_dwLogID, GetLevelString(pLogInfo->eLevel), pLogTime->tm_mon+1, pLogTime->tm_mday, pLogTime->tm_hour, pLogTime->tm_min, pLogTime->tm_sec, stLogTv.tv_usec/1000,  stLogTv.tv_usec%1000);
 
         if (NULL == m_pLogFile){
             pFile = m_pLogFile = fopen(cFullPath, "a+");
-        }else if (dwIndex != m_dwIndexL){
-            fclose(m_pLogFile);
-
-            m_dwIndexL = dwIndex;
-            pFile = m_pLogFile = fopen(cFullPath, "a+");
+            if(NULL == pFile){//文件不存在
+            	printf("Open file: %s failed", cFullPath);
+            }else{
+            	unsigned long fileSize =  getFileSize(cFullPath);
+            	if(MAX_FILE_SIZE < fileSize){
+            		 fclose(m_pLogFile);
+            		 //重命名文件
+            		 char newName[MAX_LOG_PATH] = {0};
+            		 sprintf(newName, "%s%02d_%02d-%02d_%d.log", DEFAULT_LOG_PATH, pLogTime->tm_mon+1, pLogTime->tm_mday, pLogTime->tm_hour, m_dwLogID);
+            		 if(ERR_SUCCESS == rename(cFullPath , newName)){
+            			 pFile = m_pLogFile = fopen(cFullPath, "a+");
+            		 }
+            	}
+            }
         }else{
             pFile = m_pLogFile;
         }
@@ -378,5 +386,19 @@ int CLogger::Write(LOG_INFO *pLogInfo)
     }
 
     return nNums;
+}
+/**
+ * 获取文件大小
+ */
+unsigned long  CLogger::getFileSize(const char *path)
+{
+    unsigned long filesize = -1;
+    struct stat statbuff;
+    if(stat(path, &statbuff) < 0){
+        return filesize;
+    }else{
+        filesize = statbuff.st_size;
+    }
+    return filesize;
 }
 

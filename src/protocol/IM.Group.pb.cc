@@ -4008,6 +4008,8 @@ void IMGroupNameChangeReq::Swap(IMGroupNameChangeReq* other) {
 const int IMGroupNameChangeRsp::kResultCodeFieldNumber;
 const int IMGroupNameChangeRsp::kMemberIdListFieldNumber;
 const int IMGroupNameChangeRsp::kUserIdFieldNumber;
+const int IMGroupNameChangeRsp::kGroupIdFieldNumber;
+const int IMGroupNameChangeRsp::kNameFieldNumber;
 const int IMGroupNameChangeRsp::kResultStringFieldNumber;
 const int IMGroupNameChangeRsp::kAttachDataFieldNumber;
 #endif  // !_MSC_VER
@@ -4033,6 +4035,8 @@ void IMGroupNameChangeRsp::SharedCtor() {
   _cached_size_ = 0;
   result_code_ = 0;
   user_id_ = 0u;
+  group_id_ = 0u;
+  name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   result_string_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -4044,6 +4048,9 @@ IMGroupNameChangeRsp::~IMGroupNameChangeRsp() {
 }
 
 void IMGroupNameChangeRsp::SharedDtor() {
+  if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete name_;
+  }
   if (result_string_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete result_string_;
   }
@@ -4089,8 +4096,14 @@ void IMGroupNameChangeRsp::Clear() {
     ::memset(&first, 0, n);                                \
   } while (0)
 
-  if (_has_bits_[0 / 32] & 29) {
+  if (_has_bits_[0 / 32] & 125) {
     ZR_(result_code_, user_id_);
+    group_id_ = 0u;
+    if (has_name()) {
+      if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        name_->clear();
+      }
+    }
     if (has_result_string()) {
       if (result_string_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         result_string_->clear();
@@ -4175,13 +4188,41 @@ bool IMGroupNameChangeRsp::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_result_string;
+        if (input->ExpectTag(32)) goto parse_group_id;
         break;
       }
 
-      // optional string result_string = 4;
+      // required uint32 group_id = 4;
       case 4: {
-        if (tag == 34) {
+        if (tag == 32) {
+         parse_group_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &group_id_)));
+          set_has_group_id();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(42)) goto parse_name;
+        break;
+      }
+
+      // required string name = 5;
+      case 5: {
+        if (tag == 42) {
+         parse_name:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_name()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(50)) goto parse_result_string;
+        break;
+      }
+
+      // optional string result_string = 6;
+      case 6: {
+        if (tag == 50) {
          parse_result_string:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_result_string()));
@@ -4247,10 +4288,21 @@ void IMGroupNameChangeRsp::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->user_id(), output);
   }
 
-  // optional string result_string = 4;
+  // required uint32 group_id = 4;
+  if (has_group_id()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->group_id(), output);
+  }
+
+  // required string name = 5;
+  if (has_name()) {
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      5, this->name(), output);
+  }
+
+  // optional string result_string = 6;
   if (has_result_string()) {
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->result_string(), output);
+      6, this->result_string(), output);
   }
 
   // optional bytes attach_data = 20;
@@ -4281,7 +4333,21 @@ int IMGroupNameChangeRsp::ByteSize() const {
           this->user_id());
     }
 
-    // optional string result_string = 4;
+    // required uint32 group_id = 4;
+    if (has_group_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->group_id());
+    }
+
+    // required string name = 5;
+    if (has_name()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->name());
+    }
+
+    // optional string result_string = 6;
     if (has_result_string()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -4329,6 +4395,12 @@ void IMGroupNameChangeRsp::MergeFrom(const IMGroupNameChangeRsp& from) {
     if (from.has_user_id()) {
       set_user_id(from.user_id());
     }
+    if (from.has_group_id()) {
+      set_group_id(from.group_id());
+    }
+    if (from.has_name()) {
+      set_name(from.name());
+    }
     if (from.has_result_string()) {
       set_result_string(from.result_string());
     }
@@ -4346,7 +4418,7 @@ void IMGroupNameChangeRsp::CopyFrom(const IMGroupNameChangeRsp& from) {
 }
 
 bool IMGroupNameChangeRsp::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000005) != 0x00000005) return false;
+  if ((_has_bits_[0] & 0x0000001d) != 0x0000001d) return false;
 
   return true;
 }
@@ -4356,6 +4428,8 @@ void IMGroupNameChangeRsp::Swap(IMGroupNameChangeRsp* other) {
     std::swap(result_code_, other->result_code_);
     member_id_list_.Swap(&other->member_id_list_);
     std::swap(user_id_, other->user_id_);
+    std::swap(group_id_, other->group_id_);
+    std::swap(name_, other->name_);
     std::swap(result_string_, other->result_string_);
     std::swap(attach_data_, other->attach_data_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);

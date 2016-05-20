@@ -35,6 +35,7 @@ public:
     uint32_t getUserInfo(list<uint32_t>& lsUserId);
     uint32_t reqDevicetokenV12();
     uint32_t reqGroupCreate();
+    uint32_t reqFeedback();
     uint32_t sendMsg(uint32_t nToId,IM::BaseDefine::MsgType nType, const string& strMsg);
     uint32_t getUnreadMsgCnt();
     uint32_t getRecentSession();

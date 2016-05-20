@@ -1735,10 +1735,29 @@ class IMGroupNameChangeRsp : public ::google::protobuf::MessageLite {
   inline ::google::protobuf::uint32 user_id() const;
   inline void set_user_id(::google::protobuf::uint32 value);
 
-  // optional string result_string = 4;
+  // required uint32 group_id = 4;
+  inline bool has_group_id() const;
+  inline void clear_group_id();
+  static const int kGroupIdFieldNumber = 4;
+  inline ::google::protobuf::uint32 group_id() const;
+  inline void set_group_id(::google::protobuf::uint32 value);
+
+  // required string name = 5;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 5;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  inline ::std::string* release_name();
+  inline void set_allocated_name(::std::string* name);
+
+  // optional string result_string = 6;
   inline bool has_result_string() const;
   inline void clear_result_string();
-  static const int kResultStringFieldNumber = 4;
+  static const int kResultStringFieldNumber = 6;
   inline const ::std::string& result_string() const;
   inline void set_result_string(const ::std::string& value);
   inline void set_result_string(const char* value);
@@ -1765,6 +1784,10 @@ class IMGroupNameChangeRsp : public ::google::protobuf::MessageLite {
   inline void clear_has_result_code();
   inline void set_has_user_id();
   inline void clear_has_user_id();
+  inline void set_has_group_id();
+  inline void clear_has_group_id();
+  inline void set_has_name();
+  inline void clear_has_name();
   inline void set_has_result_string();
   inline void clear_has_result_string();
   inline void set_has_attach_data();
@@ -1777,8 +1800,10 @@ class IMGroupNameChangeRsp : public ::google::protobuf::MessageLite {
   ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > member_id_list_;
   int result_code_;
   ::google::protobuf::uint32 user_id_;
+  ::std::string* name_;
   ::std::string* result_string_;
   ::std::string* attach_data_;
+  ::google::protobuf::uint32 group_id_;
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   friend void  protobuf_AddDesc_IM_2eGroup_2eproto_impl();
   #else
@@ -4147,15 +4172,115 @@ inline void IMGroupNameChangeRsp::set_user_id(::google::protobuf::uint32 value) 
   // @@protoc_insertion_point(field_set:IM.Group.IMGroupNameChangeRsp.user_id)
 }
 
-// optional string result_string = 4;
-inline bool IMGroupNameChangeRsp::has_result_string() const {
+// required uint32 group_id = 4;
+inline bool IMGroupNameChangeRsp::has_group_id() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void IMGroupNameChangeRsp::set_has_result_string() {
+inline void IMGroupNameChangeRsp::set_has_group_id() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void IMGroupNameChangeRsp::clear_has_result_string() {
+inline void IMGroupNameChangeRsp::clear_has_group_id() {
   _has_bits_[0] &= ~0x00000008u;
+}
+inline void IMGroupNameChangeRsp::clear_group_id() {
+  group_id_ = 0u;
+  clear_has_group_id();
+}
+inline ::google::protobuf::uint32 IMGroupNameChangeRsp::group_id() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupNameChangeRsp.group_id)
+  return group_id_;
+}
+inline void IMGroupNameChangeRsp::set_group_id(::google::protobuf::uint32 value) {
+  set_has_group_id();
+  group_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupNameChangeRsp.group_id)
+}
+
+// required string name = 5;
+inline bool IMGroupNameChangeRsp::has_name() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void IMGroupNameChangeRsp::set_has_name() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void IMGroupNameChangeRsp::clear_has_name() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void IMGroupNameChangeRsp::clear_name() {
+  if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_->clear();
+  }
+  clear_has_name();
+}
+inline const ::std::string& IMGroupNameChangeRsp::name() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupNameChangeRsp.name)
+  return *name_;
+}
+inline void IMGroupNameChangeRsp::set_name(const ::std::string& value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupNameChangeRsp.name)
+}
+inline void IMGroupNameChangeRsp::set_name(const char* value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupNameChangeRsp.name)
+}
+inline void IMGroupNameChangeRsp::set_name(const char* value, size_t size) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupNameChangeRsp.name)
+}
+inline ::std::string* IMGroupNameChangeRsp::mutable_name() {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    name_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupNameChangeRsp.name)
+  return name_;
+}
+inline ::std::string* IMGroupNameChangeRsp::release_name() {
+  clear_has_name();
+  if (name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = name_;
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupNameChangeRsp::set_allocated_name(::std::string* name) {
+  if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete name_;
+  }
+  if (name) {
+    set_has_name();
+    name_ = name;
+  } else {
+    clear_has_name();
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupNameChangeRsp.name)
+}
+
+// optional string result_string = 6;
+inline bool IMGroupNameChangeRsp::has_result_string() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void IMGroupNameChangeRsp::set_has_result_string() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void IMGroupNameChangeRsp::clear_has_result_string() {
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void IMGroupNameChangeRsp::clear_result_string() {
   if (result_string_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -4225,13 +4350,13 @@ inline void IMGroupNameChangeRsp::set_allocated_result_string(::std::string* res
 
 // optional bytes attach_data = 20;
 inline bool IMGroupNameChangeRsp::has_attach_data() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 inline void IMGroupNameChangeRsp::set_has_attach_data() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000040u;
 }
 inline void IMGroupNameChangeRsp::clear_has_attach_data() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline void IMGroupNameChangeRsp::clear_attach_data() {
   if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {

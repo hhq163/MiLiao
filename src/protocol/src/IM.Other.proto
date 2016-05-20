@@ -30,11 +30,14 @@ message IMSysWelcomeRsp{
 message IMFeedbackReq{
 	//cmd id:	0X0715
 	required uint32 user_id = 1;
-	required string content = 2;		//时间戳，首次进入，时间戳等于0
+	required string nick_name = 2;		//用户昵称
+	required string content = 3;		//提交的内容
+	optional bytes attach_data = 20;
 }
 
 message IMFeedbackRsp{
 	//cmd id:	0X0716
 	required IM.BaseDefine.ResultType result_code = 1;
 	optional string result_string = 2;	//错误描述信息
+	optional bytes attach_data = 20;	//附加信息
 }

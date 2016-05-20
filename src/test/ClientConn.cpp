@@ -161,6 +161,25 @@ uint32_t ClientConn::reqGroupCreate(uint32_t nUserId)
     SendPdu(&cPdu);
     return nSeqNo;
 }
+/**
+ * 意见反馈
+ */
+uint32_t ClientConn::reqFeedback(uint32_t nUserId , string strNickName){
+	CImPdu cPdu;
+	IM::Other::IMFeedbackReq msg;
+
+	msg.set_user_id(nUserId);
+	msg.set_content("赢了之后没有美女，给个性感美女奖励下呗");
+	msg.set_nick_name(strNickName);
+
+	cPdu.SetPBMsg(&msg);
+	cPdu.SetServiceId(IM::BaseDefine::SID_OTHER);
+	cPdu.SetCommandId(IM::BaseDefine::CID_OTHER_FEEDBACK_REQ);
+	uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+	cPdu.SetSeqNum(nSeqNo);
+	SendPdu(&cPdu);
+	return nSeqNo;
+}
 
 uint32_t ClientConn::sendMessage(uint32_t nFromId, uint32_t nToId, IM::BaseDefine::MsgType nType, const string& strMsgData)
 {
@@ -267,6 +286,9 @@ void ClientConn::HandlePdu(CImPdu* pPdu)
         case IM::BaseDefine::CID_LOGIN_RSP_DEVICETOKEN_V12:
         	_HandleSetDeviceTokenV12Response(pPdu);
 			break;
+        case IM::BaseDefine::CID_OTHER_FEEDBACK_RSP:
+        	_HandleFeedbackResponse(pPdu);
+        	break;
         case IM::BaseDefine::CID_BUDDY_LIST_ALL_USER_RESPONSE:
             _HandleUser(pPdu);
             break;
@@ -330,6 +352,22 @@ void ClientConn::_HandleSetDeviceTokenV12Response(CImPdu *pPdu)
     Logger.Log(INFO, "HandleSetDeviceTokenResponseV12, user_id = %u, remark = %s,  url=%s ", user_id, upgrade.remark().c_str(), upgrade.url().c_str());
 
 }
+
+/**
+ * 意见反馈响应
+ */
+void ClientConn::_HandleFeedbackResponse(CImPdu *pPdu)
+{
+    IM::Other::IMFeedbackRsp msg;
+    CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+    uint32_t retCode = msg.result_code();
+    string result_string = msg.result_string();
+
+    printf("_HandleFeedbackResponse, retCode = %d, result_string = %s", retCode, result_string.c_str());
+    Logger.Log(INFO, "_HandleFeedbackResponse, retCode = %d, result_string = %s", retCode, result_string.c_str());
+}
+
 
 void ClientConn::_HandleUser(CImPdu* pPdu)
 {

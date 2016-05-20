@@ -864,7 +864,9 @@ void IMSysWelcomeRsp::Swap(IMSysWelcomeRsp* other) {
 
 #ifndef _MSC_VER
 const int IMFeedbackReq::kUserIdFieldNumber;
+const int IMFeedbackReq::kNickNameFieldNumber;
 const int IMFeedbackReq::kContentFieldNumber;
+const int IMFeedbackReq::kAttachDataFieldNumber;
 #endif  // !_MSC_VER
 
 IMFeedbackReq::IMFeedbackReq()
@@ -887,7 +889,9 @@ void IMFeedbackReq::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   user_id_ = 0u;
+  nick_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   content_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -897,8 +901,14 @@ IMFeedbackReq::~IMFeedbackReq() {
 }
 
 void IMFeedbackReq::SharedDtor() {
+  if (nick_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete nick_name_;
+  }
   if (content_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete content_;
+  }
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete attach_data_;
   }
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   if (this != &default_instance()) {
@@ -929,11 +939,21 @@ IMFeedbackReq* IMFeedbackReq::New() const {
 }
 
 void IMFeedbackReq::Clear() {
-  if (_has_bits_[0 / 32] & 3) {
+  if (_has_bits_[0 / 32] & 15) {
     user_id_ = 0u;
+    if (has_nick_name()) {
+      if (nick_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        nick_name_->clear();
+      }
+    }
     if (has_content()) {
       if (content_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         content_->clear();
+      }
+    }
+    if (has_attach_data()) {
+      if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        attach_data_->clear();
       }
     }
   }
@@ -951,7 +971,7 @@ bool IMFeedbackReq::MergePartialFromCodedStream(
       &unknown_fields_string);
   // @@protoc_insertion_point(parse_start:IM.Other.IMFeedbackReq)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(16383);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -965,16 +985,42 @@ bool IMFeedbackReq::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(18)) goto parse_content;
+        if (input->ExpectTag(18)) goto parse_nick_name;
         break;
       }
 
-      // required string content = 2;
+      // required string nick_name = 2;
       case 2: {
         if (tag == 18) {
+         parse_nick_name:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_nick_name()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_content;
+        break;
+      }
+
+      // required string content = 3;
+      case 3: {
+        if (tag == 26) {
          parse_content:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_content()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(162)) goto parse_attach_data;
+        break;
+      }
+
+      // optional bytes attach_data = 20;
+      case 20: {
+        if (tag == 162) {
+         parse_attach_data:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_attach_data()));
         } else {
           goto handle_unusual;
         }
@@ -1012,10 +1058,22 @@ void IMFeedbackReq::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->user_id(), output);
   }
 
-  // required string content = 2;
+  // required string nick_name = 2;
+  if (has_nick_name()) {
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->nick_name(), output);
+  }
+
+  // required string content = 3;
   if (has_content()) {
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->content(), output);
+      3, this->content(), output);
+  }
+
+  // optional bytes attach_data = 20;
+  if (has_attach_data()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      20, this->attach_data(), output);
   }
 
   output->WriteRaw(unknown_fields().data(),
@@ -1034,11 +1092,25 @@ int IMFeedbackReq::ByteSize() const {
           this->user_id());
     }
 
-    // required string content = 2;
+    // required string nick_name = 2;
+    if (has_nick_name()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->nick_name());
+    }
+
+    // required string content = 3;
     if (has_content()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->content());
+    }
+
+    // optional bytes attach_data = 20;
+    if (has_attach_data()) {
+      total_size += 2 +
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
+          this->attach_data());
     }
 
   }
@@ -1061,8 +1133,14 @@ void IMFeedbackReq::MergeFrom(const IMFeedbackReq& from) {
     if (from.has_user_id()) {
       set_user_id(from.user_id());
     }
+    if (from.has_nick_name()) {
+      set_nick_name(from.nick_name());
+    }
     if (from.has_content()) {
       set_content(from.content());
+    }
+    if (from.has_attach_data()) {
+      set_attach_data(from.attach_data());
     }
   }
   mutable_unknown_fields()->append(from.unknown_fields());
@@ -1075,7 +1153,7 @@ void IMFeedbackReq::CopyFrom(const IMFeedbackReq& from) {
 }
 
 bool IMFeedbackReq::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
 
   return true;
 }
@@ -1083,7 +1161,9 @@ bool IMFeedbackReq::IsInitialized() const {
 void IMFeedbackReq::Swap(IMFeedbackReq* other) {
   if (other != this) {
     std::swap(user_id_, other->user_id_);
+    std::swap(nick_name_, other->nick_name_);
     std::swap(content_, other->content_);
+    std::swap(attach_data_, other->attach_data_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.swap(other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -1100,6 +1180,7 @@ void IMFeedbackReq::Swap(IMFeedbackReq* other) {
 #ifndef _MSC_VER
 const int IMFeedbackRsp::kResultCodeFieldNumber;
 const int IMFeedbackRsp::kResultStringFieldNumber;
+const int IMFeedbackRsp::kAttachDataFieldNumber;
 #endif  // !_MSC_VER
 
 IMFeedbackRsp::IMFeedbackRsp()
@@ -1123,6 +1204,7 @@ void IMFeedbackRsp::SharedCtor() {
   _cached_size_ = 0;
   result_code_ = 0;
   result_string_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1134,6 +1216,9 @@ IMFeedbackRsp::~IMFeedbackRsp() {
 void IMFeedbackRsp::SharedDtor() {
   if (result_string_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete result_string_;
+  }
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete attach_data_;
   }
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   if (this != &default_instance()) {
@@ -1164,11 +1249,16 @@ IMFeedbackRsp* IMFeedbackRsp::New() const {
 }
 
 void IMFeedbackRsp::Clear() {
-  if (_has_bits_[0 / 32] & 3) {
+  if (_has_bits_[0 / 32] & 7) {
     result_code_ = 0;
     if (has_result_string()) {
       if (result_string_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         result_string_->clear();
+      }
+    }
+    if (has_attach_data()) {
+      if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        attach_data_->clear();
       }
     }
   }
@@ -1186,7 +1276,7 @@ bool IMFeedbackRsp::MergePartialFromCodedStream(
       &unknown_fields_string);
   // @@protoc_insertion_point(parse_start:IM.Other.IMFeedbackRsp)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(16383);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -1216,6 +1306,19 @@ bool IMFeedbackRsp::MergePartialFromCodedStream(
          parse_result_string:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_result_string()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(162)) goto parse_attach_data;
+        break;
+      }
+
+      // optional bytes attach_data = 20;
+      case 20: {
+        if (tag == 162) {
+         parse_attach_data:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_attach_data()));
         } else {
           goto handle_unusual;
         }
@@ -1260,6 +1363,12 @@ void IMFeedbackRsp::SerializeWithCachedSizes(
       2, this->result_string(), output);
   }
 
+  // optional bytes attach_data = 20;
+  if (has_attach_data()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      20, this->attach_data(), output);
+  }
+
   output->WriteRaw(unknown_fields().data(),
                    unknown_fields().size());
   // @@protoc_insertion_point(serialize_end:IM.Other.IMFeedbackRsp)
@@ -1280,6 +1389,13 @@ int IMFeedbackRsp::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->result_string());
+    }
+
+    // optional bytes attach_data = 20;
+    if (has_attach_data()) {
+      total_size += 2 +
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
+          this->attach_data());
     }
 
   }
@@ -1305,6 +1421,9 @@ void IMFeedbackRsp::MergeFrom(const IMFeedbackRsp& from) {
     if (from.has_result_string()) {
       set_result_string(from.result_string());
     }
+    if (from.has_attach_data()) {
+      set_attach_data(from.attach_data());
+    }
   }
   mutable_unknown_fields()->append(from.unknown_fields());
 }
@@ -1325,6 +1444,7 @@ void IMFeedbackRsp::Swap(IMFeedbackRsp* other) {
   if (other != this) {
     std::swap(result_code_, other->result_code_);
     std::swap(result_string_, other->result_string_);
+    std::swap(attach_data_, other->attach_data_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.swap(other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

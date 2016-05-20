@@ -198,6 +198,10 @@ uint32_t CClient::reqGroupCreate(){
 	return g_pConn->reqGroupCreate(m_cSelfInfo.user_id());
 }
 
+uint32_t CClient::reqFeedback(){
+
+	return g_pConn->reqFeedback(m_cSelfInfo.user_id(), m_cSelfInfo.user_nick_name());
+}
 void CClient::onGetUserInfo(uint32_t nSeqNo, const list<IM::BaseDefine::UserInfo> &lsUser)
 {
 

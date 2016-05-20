@@ -53,8 +53,8 @@ public:
 			caseId = 0;
 			cout << "Enter TestCase ID number: \n" <<
 							"(1) devicetokenV12  test; \n"<<
-							"(2) group create test; \n"<<
-							"(3) groupName change test; \n"<<
+							"(2) GroupCreate test; \n"<<
+							"(3) feedback test; \n"<<
 							"(4) PersonalMsgSend test; \n"<<
 							"(5) MsgSync test; \n"<<
 							"(6) Exit test System; \n"<<
@@ -69,7 +69,7 @@ public:
 					g_pClient->reqGroupCreate();
 					break;
 				case 3:
-//					testCase.GroupInfoChange();
+					g_pClient->reqFeedback();
 					break;
 				case 4:
 //					testCase.PersonalMsgSend(client_info_t);

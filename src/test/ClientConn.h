@@ -33,6 +33,7 @@ public:
     uint32_t getUserInfo(uint32_t nUserId, list<uint32_t>& lsUserId);
     uint32_t reqDevicetokenV12(uint32_t nUserId, IM::BaseDefine::ClientType clientType, uint32_t curVer , string deviceToken);
     uint32_t reqGroupCreate(uint32_t nUserId);
+    uint32_t reqFeedback(uint32_t nUserId , string strNickName);
     uint32_t sendMessage(uint32_t nFromId, uint32_t nToId, IM::BaseDefine::MsgType nType, const string& strMsgData);
     uint32_t getUnreadMsgCnt(uint32_t nUserId);
     uint32_t getRecentSession(uint32_t nUserId, uint32_t nLastTime);
@@ -47,6 +48,7 @@ public:
 private:
 	void _HandleLoginResponse(CImPdu* pPdu);
 	void _HandleSetDeviceTokenV12Response(CImPdu *pPdu);
+	void _HandleFeedbackResponse(CImPdu *pPdu);
     void _HandleUser(CImPdu* pPdu);
     void _HandleUserInfo(CImPdu* pPdu);
     void _HandleSendMsg(CImPdu* pPdu);

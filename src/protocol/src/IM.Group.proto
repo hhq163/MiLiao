@@ -112,13 +112,9 @@ message IMGroupNameChangeRsp{
 	required IM.BaseDefine.ResultType result_code = 1;
 	repeated uint32 member_id_list = 2;	//群成员ID list服务端内部模块调用时使用，客户端不需要
 	required uint32 user_id = 3;	//修改操作人用户ID,服务端内部模块调用时使用
-<<<<<<< HEAD
 	required uint32 group_id = 4;
 	required string name = 5;		//新群名
 	optional string result_string = 6;	//错误描述信息
-=======
-	optional string result_string = 4;	//错误描述信息
->>>>>>> branch 'master' of https://github.com/hhq163/NewMessage.git
 	optional bytes attach_data = 20;
 }
 

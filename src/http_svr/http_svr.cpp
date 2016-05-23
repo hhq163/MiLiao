@@ -4,6 +4,8 @@
  *  Created on: 2016年5月10日
  *  Author: hhq163
  */
+
+#include "OsType.h"
 #include "Log.h"
 #include "ServInfo.h"
 #include "HttpConn.h"
@@ -26,7 +28,7 @@ int main(int argc, char* argv[])
     if ((argc == 2) && (strcmp(argv[1], "-v") == 0)) {
         printf("Server Version: HttpMsgServer/%s\n", VERSION);
         printf("Server Build: %s %s\n", __DATE__, __TIME__);
-        return 0;
+        return ERR_SUCCESS;
     }
 
     signal(SIGPIPE, SIG_IGN);
@@ -42,10 +44,7 @@ int main(int argc, char* argv[])
     uint32_t db_server_count = 0;
     serv_info_t* db_server_list = read_server_config(&configFile, "DBServerIP", "DBServerPort", db_server_count);
 
-    uint32_t route_server_count = 0;
-    serv_info_t* route_server_list = read_server_config(&configFile, "RouteServerIP", "RouteServerPort", route_server_count);
-
-    // 到BusinessServer的开多个并发的连接
+    // 到db的开多个并发的连接，这段逻辑好奇怪
     uint32_t concurrent_db_conn_cnt = DEFAULT_CONCURRENT_DB_CONN_CNT;
     uint32_t db_server_count2 = db_server_count * DEFAULT_CONCURRENT_DB_CONN_CNT;
     char* concurrent_db_conn = configFile.GetConfigName("ConcurrentDBConnCnt");
@@ -64,25 +63,26 @@ int main(int argc, char* argv[])
     }
 
     if (!listenIp || !strListenPort) {
-        log("config file miss, exit... ");
-        return -1;
+    	Logger.Log(ERROR, "config file miss, exit... ");
+        return ERR_FAILED;
     }
 
-    uint16_t listen_port = atoi(strListenPort);
+    uint16_t listenPort = atoi(strListenPort);
 
     int ret = netlib_init();
 
-    if (ret == NETLIB_ERROR)
+    if (ret == NETLIB_ERROR){
         return ret;
+    }
 
     CStrExplode listen_ip_list(listenIp, ';');
     for (uint32_t i = 0; i < listen_ip_list.GetItemCnt(); i++) {
-        ret = netlib_listen(listen_ip_list.GetItem(i), listen_port, http_callback, NULL);
+        ret = netlib_listen(listen_ip_list.GetItem(i), listenPort, HttpCallback, NULL);
         if (ret == NETLIB_ERROR)
             return ret;
     }
 
-    printf("server start listen on: %s:%d\n", listenIp, listen_port);
+    printf("server start listen on: %s:%d\n", listenIp, listenPort);
 
     init_http_conn();//增加一个定时器
     log("===db_server_count : %u ===\n", db_server_count);

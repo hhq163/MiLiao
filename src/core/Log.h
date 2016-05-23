@@ -27,7 +27,6 @@ enum LOG_LEVEL
 #define MAX_LOG_BUFFER  2048
 #define MAX_LOG_PATH    256
 
-<<<<<<< HEAD
 //30M
 #define MAX_FILE_SIZE 30*1024*1024
 #define DEFAULT_LOG_PATH    "./log/"
@@ -73,52 +72,6 @@ private:
     CObjectPool<LOG_INFO>   m_oLogQ, m_oIdleQ;
     CSem            m_oSem;
 
-=======
-//#ifdef __MSGSYS_SVR__
-#define DEFAULT_LOG_PATH    "./log/"
-#define DEFAULT_STAT_PATH   "./stat/"
-//#endif
-
-typedef struct
-{
-    LOG_LEVEL   eLevel;
-    time_t      tTime;
-    uint16_t      wLen;
-    char        cBuffer[MAX_LOG_BUFFER];
-}LOG_INFO;
-
-/**
- * 日志操作类
- */
-class CLogger
-{
-public:
-    CLogger();
-    ~CLogger();
-
-    bool Init(uint32_t dwID, uint32_t dwIP, uint16_t wPort);
-    void SetLogLevel(uint16_t wLevel, bool bSet);
-
-    int  Log(const char *pFileName, unsigned int nLine, LOG_LEVEL eLevel, const char *pBuffer, ...);
-
-protected:
-    static void * ThreadCallback(void *pParam);
-    bool ConnServer();
-    int Write(LOG_INFO *pLogInfo);
-    const char* GetLevelString(LOG_LEVEL eLevel);
-
-private:
-    uint16_t          m_wLevel;
-    uint32_t          m_dwLogID;
-    uint32_t          m_dwIP;
-    uint16_t          m_wPort;
-    int32_t           m_dwSockFd;
-
-    CObjectPool<LOG_INFO>   m_oLogQ, m_oIdleQ;
-    CSem            m_oSem;
-
-    uint32_t          m_dwIndexL;
->>>>>>> branch 'master' of https://github.com/hhq163/NewMessage.git
     FILE*           m_pLogFile;
     uint32_t          m_dwIndexS;
     FILE*           m_pStatFile;

@@ -83,7 +83,6 @@ void CClient::connect()
         PROMPTION;
         return;
     }
-<<<<<<< HEAD
     Logger.Log(ERROR, "begin login request");
 
     g_pConn = new ClientConn();
@@ -203,119 +202,6 @@ uint32_t CClient::reqFeedback(){
 
 	return g_pConn->reqFeedback(m_cSelfInfo.user_id(), m_cSelfInfo.user_nick_name());
 }
-=======
-    printf("begin login request\n");
-    Logger.Log(ERROR, "begin login request");
-
-    g_pConn = new ClientConn();
-    m_nHandle = g_pConn->connect(strPriorIp.c_str(), nPort, m_strName, m_strPass);
-    if(m_nHandle != INVALID_SOCKET)
-    {
-    	printf("begin login request 111\n");
-    	g_pConn->login(m_strName, m_strPass);//发送登录请求
-        netlib_register_timer(CClient::TimerCallback, NULL, 1000);
-    }
-    else
-    {
-        printf("invalid socket handle\n");
-    }
-}
-
-void CClient::onConnect()
-{
-    login(m_strName, m_strPass);
-}
-
-
-void CClient::close()
-{
-    g_pConn->Close();
-}
-
-void CClient::onClose()
-{
-
-}
-
-uint32_t CClient::login(const string& strName, const string& strPass)
-{
-    return g_pConn->login(strName, strPass);
-}
-
-void CClient::onLogin(uint32_t nSeqNo, uint32_t nResultCode, string& strMsg, IM::BaseDefine::UserInfo* pUser)
-{
-    if(nResultCode != 0){
-        printf("login failed.errorCode=%u, msg=%s\n",nResultCode, strMsg.c_str());
-        return;
-    }
-    if(pUser){
-        m_cSelfInfo = *pUser;
-        g_bLogined = true;
-    }
-    else
-    {
-        printf("pUser is null\n");
-    }
-}
-
-uint32_t CClient::getChangedUser()
-{
-    uint32_t nUserId = m_cSelfInfo.user_id();
-    return g_pConn->getUser(nUserId, m_nLastGetUser);
-}
-
-void CClient::onGetChangedUser(uint32_t nSeqNo, const list<IM::BaseDefine::UserInfo> &lsUser)
-{
-    for(auto it=lsUser.begin(); it!=lsUser.end(); ++it)
-    {
-        IM::BaseDefine::UserInfo* pUserInfo = new IM::BaseDefine::UserInfo();
-        *pUserInfo = *it;
-        uint32_t nUserId = pUserInfo->user_id();
-        string strNick = pUserInfo->user_nick_name();
-        if(it->status() != 3)
-        {
-            auto it1 = m_mapId2UserInfo.find(nUserId);
-            if(it1 == m_mapId2UserInfo.end())
-            {
-                m_mapId2UserInfo.insert(pair<uint32_t, IM::BaseDefine::UserInfo*>(nUserId, pUserInfo));
-            }
-            else
-            {
-                delete it1->second;
-                m_mapId2UserInfo[nUserId] = pUserInfo;
-            }
-
-            auto it2 = m_mapNick2UserInfo.find(strNick);
-            if(it2 == m_mapNick2UserInfo.end())
-            {
-                m_mapNick2UserInfo.insert(pair<string, IM::BaseDefine::UserInfo*>(strNick, pUserInfo));
-            }
-            else
-            {
-                delete it1->second;
-                m_mapNick2UserInfo[strNick] = pUserInfo;
-            }
-        }
-    }
-}
-
-uint32_t CClient::getUserInfo(list<uint32_t>& lsUserId)
-{
-    uint32_t nUserId = m_cSelfInfo.user_id();
-    return g_pConn->getUserInfo(nUserId, lsUserId);
-}
-/**
- * 设备令牌提交
- */
-uint32_t CClient:: reqDevicetokenV12(){
-	string deviceToken = "34d43fa55e2eef3bf84fee92011e3be09e838afc3daedf40ba13306fb9c7a998";
-	uint32_t nUserId = m_cSelfInfo.user_id();
-	uint32_t curVer = 2;
-
-	return  g_pConn->reqDevicetokenV12(nUserId, IM::BaseDefine::ClientType(18), curVer, deviceToken);
-}
-
->>>>>>> branch 'master' of https://github.com/hhq163/NewMessage.git
 void CClient::onGetUserInfo(uint32_t nSeqNo, const list<IM::BaseDefine::UserInfo> &lsUser)
 {
 

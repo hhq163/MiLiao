@@ -88,14 +88,6 @@ bRet = true;\
 bRet;\
 })
 
-typedef struct AudioMsgInfo{
-    uint32_t    audioId;
-    uint32_t    fileSize;
-    uint32_t    data_len;
-    uchar_t*    data;
-    string      path;
-
-} AudioMsgInfo_t;
 
 typedef struct DBUserInfo_t
 {
@@ -133,25 +125,6 @@ typedef struct DBUserInfo_t
 
 typedef hash_map<uint32_t, DBUserInfo_t*> DBUserMap_t;
 
-typedef struct DBDeptInfo_t
-{
-    uint32_t nId;
-    uint32_t nParentId;
-    string strName;
-
-    DBDeptInfo_t& operator=(const DBDeptInfo_t& rhs)
-    {
-        if(this != &rhs){
-            nId = rhs.nId;
-            nParentId = rhs.nParentId;
-            strName = rhs.strName;
-        }
-        return *this;
-    }
-
-} DBDeptInfo_t;
-
-typedef hash_map<uint32_t, DBDeptInfo_t*> DBDeptMap_t;
 
 typedef struct {
     uint32_t 	user_id;

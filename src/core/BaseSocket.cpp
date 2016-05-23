@@ -166,16 +166,13 @@ void CBaseSocket::OnRead()
 {
 	Logger.Log(INFO, "CBaseSocket::OnRead111");
 	if (m_state == SOCKET_STATE_LISTENING){
-		Logger.Log(INFO, "CBaseSocket::OnRead111aaa m_state=%d", m_state);
 		_AcceptNewSocket();
 	}else{
-		Logger.Log(INFO, "CBaseSocket::OnRead222000aaa");
 		u_long avail = 0;
 		if ( (ioctlsocket(m_socket, FIONREAD, &avail) == SOCKET_ERROR) || (avail == 0) ){
-			Logger.Log(INFO, "CBaseSocket::OnRead222aaa");
 			m_callback(m_callback_data, NETLIB_MSG_CLOSE, (net_handle_t)m_socket, NULL);
 		}else{
-			Logger.Log(INFO, "CBaseSocket::OnRead222bbb");
+			Logger.Log(INFO, "CBaseSocket::OnRead222");
 			m_callback(m_callback_data, NETLIB_MSG_READ, (net_handle_t)m_socket, NULL);
 		}
 	}

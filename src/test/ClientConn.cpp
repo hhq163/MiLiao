@@ -18,6 +18,7 @@ ClientConn::~ClientConn()
 
 }
 
+<<<<<<< HEAD
 net_handle_t ClientConn::connect(const string& strIp, uint16_t nPort, const string& strName, const string& strPass, PacketCallback* client)
 {
 	m_pCallback = client;
@@ -368,6 +369,296 @@ void ClientConn::_HandleFeedbackResponse(CImPdu *pPdu)
     Logger.Log(INFO, "_HandleFeedbackResponse, retCode = %d, result_string = %s", retCode, result_string.c_str());
 }
 
+=======
+net_handle_t ClientConn::connect(const string& strIp, uint16_t nPort, const string& strName, const string& strPass)
+{
+	m_handle = netlib_connect(strIp.c_str(), nPort, imconn_callback, (void*)&g_server_conn_map);
+	if (m_handle != NETLIB_INVALID_HANDLE) {
+		g_server_conn_map.insert(make_pair(m_handle, this));
+	}
+    return  m_handle;
+}
+
+
+
+void ClientConn::OnConfirm()
+{
+    if(m_pCallback){
+        m_pCallback->onConnect();
+    }
+}
+
+void ClientConn::OnClose()
+{
+    Logger.Log(INFO, "onclose from handle=%d\n", m_handle);
+    if (m_handle != NETLIB_INVALID_HANDLE) {
+    		netlib_close(m_handle);
+    		g_server_conn_map.erase(m_handle);
+    	}
+
+    Close();
+}
+
+void ClientConn::OnTimer(uint64_t curr_tick)
+{
+    if (curr_tick > m_last_send_tick + CLIENT_HEARTBEAT_INTERVAL) {
+        CImPdu cPdu;
+        IM::Other::IMHeartBeat msg;
+        cPdu.SetPBMsg(&msg);
+        cPdu.SetServiceId(IM::BaseDefine::SID_OTHER);
+        cPdu.SetCommandId(IM::BaseDefine::CID_OTHER_HEARTBEAT);
+        uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+        cPdu.SetSeqNum(nSeqNo);
+        SendPdu(&cPdu);
+    }
+    
+    if (curr_tick > m_last_recv_tick + CLIENT_TIMEOUT) {
+    	Logger.Log(ERROR, "conn to msg_server timeout\n");
+        Close();
+    }
+}
+
+
+uint32_t ClientConn::login(const string &strName, const string &strPass)
+{
+    CImPdu cPdu;
+    IM::Login::IMLoginReq msg;
+    msg.set_user_name(strName);
+    msg.set_password(strPass);
+    msg.set_online_status(IM::BaseDefine::USER_STATUS_ONLINE);
+    msg.set_client_type(IM::BaseDefine::CLIENT_TYPE_ANDROID);
+    msg.set_client_version("1.0");
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_LOGIN);
+    cPdu.SetCommandId(IM::BaseDefine::CID_LOGIN_REQ_USERLOGIN);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+
+    Logger.Log(INFO, "ClientConn::login send");
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+uint32_t ClientConn::getUser(uint32_t nUserId, uint32_t nTime)
+{
+    CImPdu cPdu;
+    IM::Buddy::IMAllUserReq msg;
+    msg.set_user_id(nUserId);
+    msg.set_latest_update_time(nTime);
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_BUDDY_LIST);
+    cPdu.SetCommandId(IM::BaseDefine::CID_BUDDY_LIST_ALL_USER_REQUEST);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+uint32_t ClientConn::getUserInfo(uint32_t nUserId, list<uint32_t>& lsUserId)
+{
+    CImPdu cPdu;
+    IM::Buddy::IMUsersInfoReq msg;
+    msg.set_user_id(nUserId);
+    for (auto it=lsUserId.begin(); it!=lsUserId.end(); ++it) {
+        msg.add_user_id_list(*it);
+    }
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_BUDDY_LIST);
+    cPdu.SetCommandId(IM::BaseDefine::CID_BUDDY_LIST_USER_INFO_REQUEST);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+/**
+ * 设备令牌提交
+ */
+uint32_t ClientConn::reqDevicetokenV12(uint32_t nUserId, IM::BaseDefine::ClientType clientType, uint32_t curVer , string deviceToken)
+{
+    CImPdu cPdu;
+    IM::Login::IMDeviceTokenReqV12 msg;
+    msg.set_user_id(nUserId);
+    msg.set_client_type(clientType);
+    msg.set_cur_ver(curVer);
+    msg.set_device_token(deviceToken);
+
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_LOGIN);
+    cPdu.SetCommandId(IM::BaseDefine::CID_LOGIN_REQ_DEVICETOKEN_V12);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+uint32_t ClientConn::sendMessage(uint32_t nFromId, uint32_t nToId, IM::BaseDefine::MsgType nType, const string& strMsgData)
+{
+    CImPdu cPdu;
+    IM::Message::IMMsgData msg;
+    msg.set_from_user_id(nFromId);
+    msg.set_to_session_id(nToId);
+    msg.set_msg_id(0);
+    msg.set_create_time(time(NULL));
+    msg.set_msg_type(nType);
+    msg.set_msg_data(strMsgData);
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_MSG);
+    cPdu.SetCommandId(IM::BaseDefine::CID_MSG_DATA);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+uint32_t ClientConn::getUnreadMsgCnt(uint32_t nUserId)
+{
+    CImPdu cPdu;
+    IM::Message::IMUnreadMsgCntReq msg;
+    msg.set_user_id(nUserId);
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_MSG);
+    cPdu.SetCommandId(IM::BaseDefine::CID_MSG_UNREAD_CNT_REQUEST);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+
+uint32_t ClientConn::getRecentSession(uint32_t nUserId, uint32_t nLastTime)
+{
+    CImPdu cPdu;
+    IM::Buddy::IMRecentContactSessionReq msg;
+    msg.set_user_id(nUserId);
+    msg.set_latest_update_time(nLastTime);
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_BUDDY_LIST);
+    cPdu.SetCommandId(IM::BaseDefine::CID_BUDDY_LIST_RECENT_CONTACT_SESSION_REQUEST);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+uint32_t ClientConn::getMsgList(uint32_t nUserId, IM::BaseDefine::SessionType nType, uint32_t nPeerId, uint32_t nMsgId, uint32_t nMsgCnt)
+{
+    CImPdu cPdu;
+    IM::Message::IMGetMsgListReq msg;
+    msg.set_user_id(nUserId);
+    msg.set_session_type(nType);
+    msg.set_session_id(nPeerId);
+    msg.set_msg_id_begin(nMsgId);
+    msg.set_msg_cnt(nMsgCnt);
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_MSG);
+    cPdu.SetCommandId(IM::BaseDefine::CID_MSG_LIST_REQUEST);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+uint32_t ClientConn::sendMsgAck(uint32_t nUserId, uint32_t nPeerId, IM::BaseDefine::SessionType nType, uint32_t nMsgId)
+{
+    CImPdu cPdu;
+    IM::Message::IMMsgDataReadAck msg;
+    msg.set_user_id(nUserId);
+    msg.set_session_id(nPeerId);
+    msg.set_session_type(nType);
+    msg.set_msg_id(nMsgId);
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_MSG);
+    cPdu.SetCommandId(IM::BaseDefine::CID_MSG_READ_ACK);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+void ClientConn::Close()
+{
+	if (m_handle != NETLIB_INVALID_HANDLE) {
+		netlib_close(m_handle);
+	}
+	ReleaseRef();
+}
+
+void ClientConn::HandlePdu(CImPdu* pPdu)
+{
+	Logger.Log(INFO, "pdu CommandId = %u\n", pPdu->GetCommandId());
+	switch (pPdu->GetCommandId()) {
+        case IM::BaseDefine::CID_OTHER_HEARTBEAT:
+        	Logger.Log(INFO, "Heartbeat\n");
+        	break;
+        case IM::BaseDefine::CID_LOGIN_RES_USERLOGIN:
+            _HandleLoginResponse(pPdu);
+            break;
+        case IM::BaseDefine::CID_LOGIN_RSP_DEVICETOKEN_V12:
+        	_HandleSetDeviceTokenV12Response(pPdu);
+			break;
+        case IM::BaseDefine::CID_BUDDY_LIST_ALL_USER_RESPONSE:
+            _HandleUser(pPdu);
+            break;
+        case IM::BaseDefine::CID_BUDDY_LIST_USER_INFO_RESPONSE:
+            _HandleUserInfo(pPdu);
+            break;
+        case IM::BaseDefine::CID_MSG_DATA_ACK:
+            _HandleSendMsg(pPdu);
+            break;
+        case IM::BaseDefine::CID_MSG_UNREAD_CNT_RESPONSE:
+            _HandleUnreadCnt(pPdu);
+            break;
+        case IM::BaseDefine::CID_BUDDY_LIST_RECENT_CONTACT_SESSION_RESPONSE:
+            _HandleRecentSession(pPdu);
+            break;
+        case IM::BaseDefine::CID_MSG_LIST_RESPONSE:
+            _HandleMsgList(pPdu);
+            break;
+        case IM::BaseDefine::CID_MSG_DATA:
+            _HandleMsgData(pPdu);
+            break;
+        default:
+        	Logger.Log(ERROR, "wrong msg_type=%d\n", pPdu->GetCommandId());
+		break;
+	}
+}
+void ClientConn::_HandleLoginResponse(CImPdu* pPdu)
+{
+	Logger.Log(INFO, "ClientConn::_HandleLoginResponse111");
+    IM::Login::IMLoginRes msgResp;
+    uint32_t nSeqNo = pPdu->GetSeqNum();
+    if(msgResp.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+    {
+        uint32_t nRet = msgResp.result_code();
+        string strMsg = msgResp.result_string();
+        if(nRet == 0){
+            m_bOpen = true;
+            IM::BaseDefine::UserInfo cUser = msgResp.user_info();
+            m_pCallback->onLogin(nSeqNo, nRet, strMsg, &cUser);
+        }else{
+            m_pCallback->onLogin(nSeqNo, nRet, strMsg);
+        }
+    }
+    else
+    {
+        m_pCallback->onError(nSeqNo, pPdu->GetCommandId(), "parse pb error");
+    }
+}
+
+/**
+ * 设备令牌请求响应
+ */
+void ClientConn::_HandleSetDeviceTokenV12Response(CImPdu *pPdu)
+{
+    IM::Login::IMDeviceTokenRspV12 msg;
+    CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+    uint32_t user_id = msg.user_id();
+    IM::Login::IMDeviceTokenRspV12::Upgrade upgrade = msg.upgrade();
+    Logger.Log(INFO, "HandleSetDeviceTokenResponseV12, user_id = %u, remark = %s,  url=%s ", user_id, upgrade.remark().c_str(), upgrade.url().c_str());
+
+}
+>>>>>>> branch 'master' of https://github.com/hhq163/NewMessage.git
 
 void ClientConn::_HandleUser(CImPdu* pPdu)
 {

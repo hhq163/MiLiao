@@ -44,6 +44,7 @@ $(BIN):$(OBJS)
 	@echo "[$(ARCH)] \t\tCompileing $@..."
 	@$(CC) $(CFLAGS) -c $< -o $@
 	
+<<<<<<< HEAD
 ifeq ($(shell uname), Darwin)
 	@echo "[$(ARCH)] \t\tCompileing $@..."
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -51,6 +52,16 @@ else
 	@echo "[$(ARCH)] \t\tCompileing $@..."
 	$(CC) $(CFLAGS) -c $< -o $@
 endif
+=======
+#ifeq ($(shell uname), Darwin)
+#	@echo "[$(ARCH)] \t\tCompileing $@..."
+#	$(CC) $(CFLAGS) -c $< -o $@
+#else
+#
+#	@echo "[$(ARCH)] \t\tCompileing $@..."
+#	$(CC) $(CFLAGS) -c $< -o $@
+#endif
+>>>>>>> branch 'master' of https://github.com/hhq163/NewMessage.git
 
 .PHONY: clean
 clean:

@@ -14,7 +14,6 @@
 static CImConn* FindImConn(ConnMap_t* imconn_map, net_handle_t handle)
 {
 	CImConn* pConn = NULL;
-	Logger.Log(INFO, "FindImConn1111");
 	ConnMap_t::iterator iter = imconn_map->find(handle);
 	Logger.Log(INFO, "Err  imconn_map=%d  handle=%d", imconn_map->size(), handle);
 
@@ -28,20 +27,24 @@ static CImConn* FindImConn(ConnMap_t* imconn_map, net_handle_t handle)
 
 void imconn_callback(void* callback_data, uint8_t msg, uint32_t handle, void* pParam)
 {
+	Logger.Log(INFO, "imconn_callback000");
 	NOTUSED_ARG(handle);
+	Logger.Log(INFO, "imconn_callback000111 handle=%d", handle);
 	NOTUSED_ARG(pParam);
-	Logger.Log(INFO, "imconn_callback111");
-	if (NULL == callback_data){
+	if (!callback_data)
+		Logger.Log(INFO, "imconn_callback000222");
 		return;
-	}
-	Logger.Log(INFO, "imconn_callback222");
+	Logger.Log(INFO, "imconn_callback000333");
+
 	ConnMap_t* conn_map = (ConnMap_t*)callback_data;
 	CImConn* pConn = FindImConn(conn_map, handle);
+	Logger.Log(INFO, "imconn_callback000333---444- %p", pConn);
 
-Logger.Log(INFO, "imconn_callback333");
-	if (pConn == NULL){
+	if (pConn == NULL)
+		Logger.Log(INFO, "imconn_callback000444");
 		return;
-	}
+	Logger.Log(INFO, "imconn_callback5555");
+	Logger.Log(INFO, "msg=%d, handle=%d ", msg, handle);
 
 	switch (msg){
 	case NETLIB_MSG_CONFIRM:

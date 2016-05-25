@@ -1,9 +1,13 @@
 /**
  * 当前模块预定义变量
  */
+#ifndef SRC_HTTP_SVR_COMMON_H_
+#define SRC_HTTP_SVR_COMMON_H_
+
+#include "OsType.h"
 
 #define READ_BUF_SIZE   2048
-#define HTTP_CONN_TIMEOUT           60000
+#define HTTP_CONN_TIMEOUT           60000*2
 
 //连接状态
 enum CONN_STATE{
@@ -47,3 +51,5 @@ static string HTTP_ERROR_MSG[] =
     "更改群成员失败",
     "消息加密失败",
 };
+
+#endif /* SRC_HTTP_SVR_COMMON_H_ */

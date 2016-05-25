@@ -10,9 +10,9 @@
 #define http_msg_server_HttpParserWrapper_h
 
 #include "HttpParser.h"
-#include "util.h"
+#include "Util.h"
 
-// extract url and content body from an ajax request
+// 从HTTP请求中提取 url 和包体
 class CHttpParserWrapper {
 public:
     CHttpParserWrapper();

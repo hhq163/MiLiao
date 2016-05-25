@@ -6,7 +6,11 @@
  */
 
 #include "RouteConfig.h"
+#include "controller/ControllerLogin.h"
 #include "IM.BaseDefine.pb.h"
+
+using namespace IM::BaseDefine;
+CRouteConfig* CRouteConfig::m_handlerInstance = NULL;
 
 CRouteConfig::CRouteConfig() {
     // TODO Auto-generated constructor stub
@@ -38,8 +42,7 @@ CRouteConfig* CRouteConfig::getInstance()
 void CRouteConfig::Init()
 {
     // Login模块逻辑
-    m_routeConfigMap.insert(make_pair(uint32_t(CID_OTHER_VALIDATE_REQ), HTTP_CONTROLLER::doLogin));
-//    m_routeConfigMap.insert(make_pair(uint32_t(CID_LOGIN_REQ_PUSH_SHIELD), HTTP_CONTROLLER::doPushShield));
+	m_routeConfigMap.insert(make_pair("/api/login", HTTP_CONTROLLER::doLogin));
 
 
 }
@@ -47,7 +50,7 @@ void CRouteConfig::Init()
 /**
  *  获取URI对应的控制器及方法
  */
-pdu_handler_t CRouteConfig::GetAction(string uri){
+ActionHandlerT CRouteConfig::GetAction(string uri){
     RouteConfigMap::iterator it = m_routeConfigMap.find(uri);
     if (it != m_routeConfigMap.end()) {
         return it->second;

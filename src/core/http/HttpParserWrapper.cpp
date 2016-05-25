@@ -1,13 +1,8 @@
-//
-//  HttpPdu.cpp
-//  http_msg_server
-//
-//  Created by jianqing.du on 13-9-29.
-//  Copyright (c) 2013年 ziteng. All rights reserved.
-//
+/**
+ * HTTP协议解析
+ */
 
 #include "HttpParserWrapper.h"
-
 #include "HttpParser.h"
 
 #define MAX_REFERER_LEN	32

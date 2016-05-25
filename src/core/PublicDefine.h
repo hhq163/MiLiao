@@ -15,6 +15,13 @@
 using namespace std;
 
 
+//error code
+#define ERR_SUCCESS          0
+#define ERR_FAILED          1
+#define ERR_PROTOCOL			2
+#define ERR_NO_MORE_DATA    3
+#define ERR_NO_MORE_SPACE   4
+
 enum {
     USER_CNT_INC = 1,
     USER_CNT_DEC = 2,
@@ -88,20 +95,29 @@ bRet = true;\
 bRet;\
 })
 
+typedef struct AudioMsgInfo{
+    uint32_t    audioId;
+    uint32_t    fileSize;
+    uint32_t    data_len;
+    uchar_t*    data;
+    string      path;
+
+} AudioMsgInfo_t;
 
 typedef struct DBUserInfo_t
 {
     uint32_t nId;//用户ID
     uint8_t nSex;// 用户性别 1.男;2.女
     uint8_t nStatus; // 用户状态0 正常， 1 离职
-    uint32_t nDeptId;// 所属部门
     string strNick;// 花名
-    string strDomain;// 花名拼音
+    string strPinyin;// 花名拼音
     string strName;// 真名
     string strTel;// 手机号码
     string strEmail;// Email
     string strAvatar;// 头像
     string sign_info;//个性签名
+    uint8 nLevel;//用户等级
+    string strCountry;//国家英文缩写
     DBUserInfo_t& operator=(const DBUserInfo_t& rhs)
     {
         if(this != &rhs)
@@ -109,14 +125,15 @@ typedef struct DBUserInfo_t
             nId = rhs.nId;
             nSex = rhs.nSex;
             nStatus = rhs.nStatus;
-            nDeptId = rhs.nDeptId;
             strNick = rhs.strNick;
-            strDomain = rhs.strDomain;
+            strPinyin = rhs.strPinyin;
             strName = rhs.strName;
             strTel = rhs.strTel;
             strEmail = rhs.strEmail;
             strAvatar = rhs.strAvatar;
             sign_info = rhs.sign_info;
+            nLevel = rhs.nLevel;
+            strCountry = rhs.strCountry;
         }
         return *this;
     }

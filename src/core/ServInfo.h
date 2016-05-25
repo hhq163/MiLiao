@@ -1,15 +1,10 @@
-/*
- *  FileName:ServInfo.h
- *  Author: hyheng
- *  email:yongheng.h@163.com
- *  UpdateDate:2015/09/14
- */
+
 
 #ifndef SERVINFO_H_
 #define SERVINFO_H_
 
-#include "util.h"
-#include "imconn.h"
+#include "Util.h"
+#include "ImConn.h"
 #include "ConfigFileReader.h"
 
 #define MAX_RECONNECT_CNT	64

@@ -8,9 +8,9 @@
 #ifndef SRC_HTTP_SVR_ROUTECONFIG_H_
 #define SRC_HTTP_SVR_ROUTECONFIG_H_
 #include "OsType.h"
+#include "HttpTask.h"
 
-typedef void (*pdu_handler_t)(CImPdu* pPdu, uint32_t conn_uuid);
-typedef map<uint32_t, pdu_handler_t> RouteConfigMap;
+typedef map<string, ActionHandlerT> RouteConfigMap;
 
 /*
  * 路由配置类
@@ -21,7 +21,7 @@ public:
 
     virtual ~CRouteConfig();
     void Init();
-    pdu_handler_t GetAction(string uri);
+    ActionHandlerT GetAction(string uri);
 private:
     CRouteConfig();
     static  CRouteConfig* m_handlerInstance;

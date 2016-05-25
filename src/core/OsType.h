@@ -35,6 +35,10 @@
     #include <stdint.h>		// define int8_t ...
     #include <signal.h>
     #include <unistd.h>
+	#include <string>
+	#include <map>
+	using namespace std;
+
     #define closesocket close
     #define ioctlsocket ioctl
 #endif
@@ -100,13 +104,6 @@ enum{
 
 const uint32_t INVALID_UINT32  = (uint32_t) -1;
 const uint32_t INVALID_VALUE = 0;
-
-//error code
-#define ERR_SUCCESS          0
-#define ERR_FAILED          -1
-#define ERR_NO_MORE_DATA    -2
-#define ERR_NO_MORE_SPACE   -3
-#define ERR_PROTOCOL        -4
 
 //compiled config
 #define CFG_OBJECT_POOL

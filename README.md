@@ -1,4 +1,4 @@
-[TOC]
+[toc]
 
 ###NewMessage v0.2
 

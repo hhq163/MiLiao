@@ -19,15 +19,15 @@
 1、yum install uuid uuid-dev libuuid-devel
 
 2、安装hiredis客户端
-文件在\/doc中，执行.\/make_hiredis.sh即可；
+文件在/doc中，执行./make_hiredis.sh即可；
 
 3、安装Protobuf
-文件在\/doc中，执行.\/make_protobuf.sh即可；
+文件在/doc中，执行./make_protobuf.sh即可；
 
 4、安装mongoDB c drive:
 
 1.下载
-    wget https:\/\/github.com\/mongodb\/libbson\/releases\/download\/1.3.5\/libbson-1.3.5.tar.gz
+    wget https://github.com/mongodb/libbson/releases/download/1.3.5/libbson-1.3.5.tar.gz
     wget https://github.com/mongodb/mongo-c-driver/releases/download/1.3.5/mongo-c-driver-1.3.5.tar.gz
 
 2.安装libbson  
@@ -38,16 +38,13 @@ tar -xzvf libbson-1.3.5.tar.gz
     make install
     cd ../
     
-    3.安装mongodb c driver：  
-    
-    yum install pkg-config openssl-devel cyrus-sasl-devel
+3.安装mongodb c driver：   
+yum install pkg-config openssl-devel cyrus-sasl-devel
     tar xzvf mongo-c-driver-1.3.5.tar.gz
     cd mongo-c-driver-1.3.5
     ./configure
     make
     make install
-    cd ../
-
-  
-  
+    cd ../  
+    
 安装位置为/usr/local/lib/libmongoc-1.0.so

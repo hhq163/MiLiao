@@ -15,7 +15,7 @@
 
 ####安装配置
 
-第三方类库安装：
+第三方类库安装：  
 1、yum install uuid uuid-dev libuuid-devel
 
 2、安装hiredis客户端
